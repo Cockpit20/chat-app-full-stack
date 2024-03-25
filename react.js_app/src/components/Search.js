@@ -4,8 +4,8 @@ import { Autocomplete } from '@mui/material'
 import { TextField } from "@mui/material";
 import "./Search.css"
 
-const Search = ({filteredFun, addFriend}) => {
-    const {loggedInUser, users} = useContext(UserContext);
+const Search = ({ filteredFun, addFriend }) => {
+    const { loggedInUser, users } = useContext(UserContext);
     const [searchedUser, setSearchedUser] = useState([])
     const [isFriend, setIsFriend] = useState(false)
     const [inputValue, setInputValue] = useState("")
@@ -15,20 +15,20 @@ const Search = ({filteredFun, addFriend}) => {
     const options = optionsObjectArr.map(user => user.username)
 
     const filteredUser = () => users.find(user => {
-            if(user.username.toLowerCase() === (inputValue.toLowerCase())){
-                setSearchedUser(user)
-                return user
-            }else{
-                return null
-            }
-        })
+        if (user.username.toLowerCase() === (inputValue.toLowerCase())) {
+            setSearchedUser(user)
+            return user
+        } else {
+            return null
+        }
+    })
 
     const filteredFriends = username => {
         return loggedInUser.friends.find(friend => {
-            if(friend.username.toLowerCase() === username.toLowerCase()){
+            if (friend.username.toLowerCase() === username.toLowerCase()) {
                 setSearchedUser(friend)
                 return friend
-            }else{
+            } else {
                 return null
             }
         })
@@ -37,9 +37,9 @@ const Search = ({filteredFun, addFriend}) => {
     const isFindFriend = () => {
         return loggedInUser.friends.find(friend => {
             const isFind = users.find(user => {
-                if(user._id === friend._id){
+                if (user._id === friend._id) {
                     return user.username.toLowerCase() === inputValue.toLowerCase()
-                }else{
+                } else {
                     return false
                 }
             })
@@ -49,52 +49,53 @@ const Search = ({filteredFun, addFriend}) => {
     }
 
     const handleSubmit = event => {
+        console.log("Search button clicked!")
         event.preventDefault()
-        if(inputValue === "") filteredFun(loggedInUser.friends)
+        if (inputValue === "") filteredFun(loggedInUser.friends)
         const friend = filteredFriends(inputValue)
-        if(isFindFriend() && friend){
+        if (isFindFriend() && friend) {
             filteredFun([friend])
         }
         setInputValue("")
     }
 
     const handleClickToAddFriend = () => {
-        if(isFindFriend() === undefined){
-            const user = filteredUser()
-            addFriend(user)
-            setInputValue("")
+        const user = filteredUser();
+        if (user) { // Check if user is found
+            addFriend(user);
+            setInputValue("");
         }
     }
 
-return(
-    <div className="search">
-        <div className="autocomplete">
-        <Autocomplete
-            freeSolo
-            disableClearable
-            options={options}
-            inputValue={inputValue}
-            onInputChange={(event, newInputValue) => {
-            setInputValue(newInputValue);
-            }}
-            renderInput={(params) => (
-                <TextField
-                    {...params}
-                    label="Search username"
-                    InputProps={{
-                    ...params.InputProps,
-                    type: 'search',
+    return (
+        <div className="search">
+            <div className="autocomplete">
+                <Autocomplete
+                    freeSolo
+                    disableClearable
+                    options={options}
+                    inputValue={inputValue}
+                    onInputChange={(event, newInputValue) => {
+                        setInputValue(newInputValue);
                     }}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label="Search username"
+                            InputProps={{
+                                ...params.InputProps,
+                                type: 'search',
+                            }}
+                        />
+                    )}
                 />
-              )}
-        />
+            </div>
+            <div className="right">
+                <button id="search-btn" onClick={handleSubmit} alt="search button">🔍</button>
+                <button id="add-btn" onClick={handleClickToAddFriend} alt="add friend button">➕</button>
+            </div>
         </div>
-        <div className="right">
-            <button id="search-btn" onClick={handleSubmit} alt="search button">🔍</button>
-            <button id="add-btn" onClick={handleClickToAddFriend} alt="add friend button">➕</button>
-        </div>
-    </div>
-)
+    )
 
 }
 
